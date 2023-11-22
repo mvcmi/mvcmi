@@ -2,10 +2,9 @@
 Multivariate connectivity methods
 
 Authors: Martin Luessi
-         Padmavathi Sundaram
+         Padmavathi Sundaram <padma@nmr.mgh.harvard.edu>
          Mainak Jas <mjas@mgh.harvard.edu>
 """
-import mne
 
 import numpy as np
 from numpy.linalg import qr, slogdet
