@@ -1,8 +1,8 @@
-"""Dataset fetcher.
+"""Dataset fetcher."""
 
-Authors: Mainak Jas <mjas@mgh.harvard.edu>
-"""
+# Authors: Mainak Jas <mjas@mgh.harvard.edu>
 
+import numpy as np
 import pooch
 
 
@@ -68,8 +68,7 @@ def load_label_ts(fname, n_parcels=None):
     label_ts : list of n_parcels
         The label time series.
     """
-    label_ts_fname = data_path / 'label_ts.npz'
-    label_ts_load = np.load(label_ts_fname)
+    label_ts_load = np.load(fname)
     keys = label_ts_load.keys()
     n_elems = len(keys)
     label_ts = [None] * n_elems
