@@ -5,8 +5,23 @@ Authors: Mainak Jas <mjas@mgh.harvard.edu>
 
 import pooch
 
+
 def fetch_hcp_sample(path=None):
-    """Fetch sample HCP dataset."""
+    """Fetch sample HCP dataset.
+
+    Parameters
+    ----------
+    path : str
+        If path is provided, save data to path.
+        Else the data is saved to the cache directory
+        of the operating system. See return values
+        to get the automatically determined path.
+    
+    Returns
+    -------
+    path : str
+        The path to where the data is saved.
+    """
 
     if path is None:
         path = pooch.os_cache('mvcmi')
@@ -35,3 +50,37 @@ def fetch_hcp_sample(path=None):
         fetcher.fetch(fname, progressbar=True)
     
     return path
+
+
+def load_label_ts(fname, n_parcels=None):
+    """Load the label time series.
+
+    Parameters
+    ----------
+    fname : str
+        The path to the label time series.
+    n_parcels : int | None
+        If None, keep all parcels. Else,
+        keep n_parcels.
+
+    Returns
+    -------
+    label_ts : list of n_parcels
+        The label time series.
+    """
+    label_ts_fname = data_path / 'label_ts.npz'
+    label_ts_load = np.load(label_ts_fname)
+    keys = label_ts_load.keys()
+    n_elems = len(keys)
+    label_ts = [None] * n_elems
+    for key in keys:
+        idx = int(key.split('_')[1])
+        label_ts[idx] = label_ts_load[key][:, 0:]
+
+    if n_parcels is not None:
+        label_ts = label_ts[:n_parcels]
+
+    print("done reading in label_ts\n")
+    print("%d\n" % n_elems)    
+
+    return label_ts
