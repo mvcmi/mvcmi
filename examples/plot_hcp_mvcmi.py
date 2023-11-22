@@ -45,12 +45,12 @@ label_ts_red = Parallel(n_jobs=n_jobs, verbose=4)(delayed(reduce_dim)(
 
 # %%
 # do the actual CMI computation
-print ("computing cmi")
+print("computing cmi")
 cmimtx = compute_cmi(label_ts_red)
 
 # %%
 # compare to correlation coefficient
-print ("computing sccoef_pca")
+print("computing sccoef_pca")
 corrmtx = compute_ccoef_pca(label_ts_red)
 
 # %%
@@ -63,4 +63,3 @@ plt.colorbar()
 plt.figure()
 plt.imshow(corrmtx)
 plt.colorbar()
-

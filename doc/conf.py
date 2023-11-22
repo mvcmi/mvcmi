@@ -48,7 +48,8 @@ master_doc = 'index'
 pygments_style = 'sphinx'
 
 sphinx_gallery_conf = {
-    "doc_module": "mvcmi",
+    "doc_module": ("mvcmi",),
+    "reference_url": dict(mvcmi=None),
     "examples_dirs": "../examples",
     "gallery_dirs": "auto_examples",
     'backreferences_dir': 'generated',
@@ -58,7 +59,8 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'numpy': ('https://numpy.org/devdocs', None),
     'scipy': ('https://scipy.github.io/devdocs', None),
-    'matplotlib': ('https://matplotlib.org', None)
+    'matplotlib': ('https://matplotlib.org', None),
+    'joblib': ('https://joblib.readthedocs.io/', None)
 }
 intersphinx_timeout = 5
 
