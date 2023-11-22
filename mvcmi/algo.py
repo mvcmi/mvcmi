@@ -74,7 +74,18 @@ def cmui_from_pcor_mvar(label_ts, pcor):
 
 
 def compute_cmi(label_ts):
-    """Compute conditional MI."""
+    """Compute conditional MI.
+
+    Parameters
+    ----------
+    label_ts : list
+        The label time series.
+    
+    Returns
+    -------
+    cmi : array of shape (n_labels, n_labels)
+        The conditional mutual information matrix.
+    """
     print("mvcon compute_cmi")
     pcor_mv = partial_corr_mvar(label_ts)
     cmi = cmui_from_pcor_mvar(label_ts, pcor_mv)

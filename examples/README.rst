@@ -1,2 +1,2 @@
-CMB Examples
-============
+MVCMI Examples
+==============

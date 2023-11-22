@@ -59,7 +59,7 @@ clean:
 	rm -rf modules/*
 
 html-noplot:
-	$(SPHINXBUILD) -D plot_gallery=0 -D nbsphinx_execute=never -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	$(SPHINXBUILD) -D plot_gallery=0 -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
@@ -82,7 +82,7 @@ view:
 
 install:
 	rm -rf _build/doctrees _build/mvcmi.github.io
-	git clone -b master --single-branch --no-checkout --depth 1 git@github.com:mvcmi/mvcmi.github.io.git _build/mvcmi.github.io
+	git clone -b main --single-branch --no-checkout --depth 1 git@github.com:mvcmi/mvcmi.github.io.git _build/mvcmi.github.io
 	touch _build/mvcmi.github.io/.nojekyll
 	make html
 	cd _build/ && \

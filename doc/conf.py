@@ -24,6 +24,7 @@ extensions = [
     'numpydoc',
     'sphinx_copybutton',
     'sphinxcontrib.jquery',
+    'sphinx.ext.viewcode'
 ]
 
 autosummary_generate = True
