@@ -20,6 +20,14 @@ Dimensionality Reduction
 
     reduce_dim
 
+Null distribution
+-----------------
+.. autosummary::
+   :toctree: generated/
+
+   generate_null_dist
+   z_score
+
 .. currentmodule:: mvcmi.datasets
 
 Loading Data
