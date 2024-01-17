@@ -63,3 +63,12 @@ plt.colorbar()
 plt.figure()
 plt.imshow(corrmtx)
 plt.colorbar()
+
+# %%
+# now let us compute CMI for the null distribution
+null_ts = generate_null_dist(label_ts_red, min_dim, max_dim, dim_red=dim_red,
+                              seed1=0, seed2=50, n_jobs=n_jobs)
+null_cmi = compute_cmi(null_ts)
+
+# %%
+# 

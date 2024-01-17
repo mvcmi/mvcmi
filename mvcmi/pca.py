@@ -1,10 +1,8 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 30 11:29:46 2017
+"""Functions for dimensionality reduction."""
 
-@author: padma
-"""
+# Authors: Padma Sundaram <padma@nmr.mgh.harvard.edu>
+#          Mainak Jas <mjas@mgh.harvard.edu>
+
 import numpy as np
 from scipy import linalg
 from sklearn.decomposition import PCA
@@ -55,3 +53,64 @@ def reduce_dim(this_label_ts, dim_red, min_dim=15, max_dim=100, n_use=None):
             if try_no == 2:
                 raise err
     return ts_red
+
+
+def generate_null_dist(label_ts_red, min_dim, max_dim, dim_red=0.95,
+                       seed1=0, seed2=50, n_jobs=1):
+    """Generate null distribution.
+
+    Parameters
+    ----------
+    label_ts_red : list of arrays of shape (n_label_voxels, n_times)
+        The data label time series AFTER dimensionality reduction.
+    min_dim : float
+        dim_red to be passed to reduce_dim function for reducing
+        dimension of noise.
+    max_dim : float
+        dim_red to be passed to reduce_dim function for reducing
+        dimension of noise.
+    dim_red : float
+        dim_red to be passed to reduce_dim function for reducing
+        dimension of noise.
+    seed1 : int
+        The starting seed for generating the distribution.  
+    seed2 : int
+        The ending seed for generating the distribution; seed1
+        and seed2 will determine the number of data points in the
+        null distribution.
+    n_jobs : int
+        The number of jobs for parallel processing of PCA.
+
+    Returns
+    -------
+    noise_ts : list of arrays of shape (n_label_voxels, n_times)
+        The noise time series with same dimensions as label time series
+        and variance scaled to the variance of the data.
+    """
+    p = len(label_ts)
+
+    psz = list()  # parcel sizes
+    label_vars = list()  # label variances
+    for this_label_ts in label_ts_red:
+        psz_red.append(np.shape(label_ts_red[ii]))
+        label_vars.append(np.var(label_ts_red[ii]))
+
+    # Generate the noise time series            
+    noise_ts = list()
+    for seed in np.arange(seed1, seed2 + 1, 1):
+        rng = np.random.RandomState(seed)
+        for ii in range(p):
+            label_ts_noise = rng.randn(psz[ii])       
+            noise_ts.append(label_ts_noise)
+
+    # Apply dimensionality reduction on noise time series
+    noise_ts_red = Parallel(n_jobs=n_jobs, verbose=4)(delayed(reduce_dim)
+        (this_ts, dim_red=dim_red, min_dim=min_dim, max_dim=max_dim, n_use=n_use)
+        for this_ts, n_use in zip(noise_ts, psz_red))  
+
+    # Scale noise time series by variance of data time series
+    for this_noise_ts, label_var in zip(noise_ts, label_vars):
+        scale = np.sqrt(label_var) / np.std(this_noise_ts, axis=1)            
+        this_noise_ts *= scale[:, None]
+
+    return noise_ts
