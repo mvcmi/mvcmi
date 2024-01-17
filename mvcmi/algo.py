@@ -90,3 +90,32 @@ def compute_cmi(label_ts):
     pcor_mv = partial_corr_mvar(label_ts)
     cmi = cmui_from_pcor_mvar(label_ts, pcor_mv)
     return cmi
+
+def z_score(data_cmis, null_cmis, alpha=None):
+
+    p = data_cmis.shape[0]
+    idx_lt = np.tril_indices(p, k=-1)
+
+    z_cmi = data_cmis.copy()
+
+    # z-score
+    mu, sig = null_cmis.mean(axis=0), null_cmis.std(axis=0)
+    z_cmi[idx_lt] -= mu[idx_lt]
+    z_cmi[idx_lt] /= sig[idx_lt]
+
+    z_cmi = np.abs(z_cmi)
+
+    # Thresholding
+    if alpha is not None:
+        percentile = (1 - alpha / (p * (p - 1) / 2.)) * 100.
+        null_cmis -= mu
+        null_cmis /= sig
+        z_thresh = np.percentile(null_cmis, percentile, axis=0)
+        z_cmi = np.clip(z_cmi, z_thresh, None)
+
+        # remove nans
+        z_cmi2 = np.zeros_like(z_cmi)
+        z_cmi2[idx_lt] = z_cmi[idx_lt]
+        z_cmi = z_cmi2.copy()
+
+    return z_cmi
