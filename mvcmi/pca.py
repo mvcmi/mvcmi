@@ -56,8 +56,8 @@ def reduce_dim(this_label_ts, dim_red, min_dim=15, max_dim=100, n_use=None):
     return ts_red
 
 
-def generate_null_dist(label_ts, label_ts_red, min_dim, max_dim, dim_red=0.95,
-                       seed1=0, seed2=50, n_jobs=1):
+def generate_noise_ts(label_ts, label_ts_red, min_dim, max_dim, dim_red=0.95,
+                      seed1=0, seed2=50, n_jobs=1):
     """Generate null distribution.
 
     Parameters
@@ -99,23 +99,29 @@ def generate_null_dist(label_ts, label_ts_red, min_dim, max_dim, dim_red=0.95,
         psz.append(np.shape(this_label_ts))
         psz_red.append(np.shape(this_label_ts_red))
         label_vars.append(np.var(this_label_ts_red))
-
-    # Generate the noise time series            
+      
     noise_ts = list()
+    print('Generating noise time series')
     for seed in np.arange(seed1, seed2 + 1, 1):
+        print(seed)
         rng = np.random.RandomState(seed)
+
+        # Generate the noise time series
+        this_noise_ts = list()
         for ii in range(p):
             label_ts_noise = rng.randn(*psz[ii])
-            noise_ts.append(label_ts_noise)
+            this_noise_ts.append(label_ts_noise)
+            
+        # Apply dimensionality reduction on noise time series
+        noise_ts_red = Parallel(n_jobs=n_jobs, verbose=4)(delayed(reduce_dim)
+            (this_ts, dim_red=dim_red, min_dim=min_dim, max_dim=max_dim, n_use=n_use[0])
+            for this_ts, n_use in zip(this_noise_ts, psz_red))  
 
-    # Apply dimensionality reduction on noise time series
-    noise_ts_red = Parallel(n_jobs=n_jobs, verbose=4)(delayed(reduce_dim)
-        (this_ts, dim_red=dim_red, min_dim=min_dim, max_dim=max_dim, n_use=n_use[0])
-        for this_ts, n_use in zip(noise_ts, psz_red))  
-
-    # Scale noise time series by variance of data time series
-    for this_noise_ts, label_var in zip(noise_ts, label_vars):
-        scale = np.sqrt(label_var) / np.std(this_noise_ts, axis=1)            
-        this_noise_ts *= scale[:, None]
+        # Scale noise time series by variance of data time series
+        for label_noise_ts, label_var in zip(noise_ts_red, label_vars):
+            scale = np.sqrt(label_var) / np.std(label_noise_ts, axis=1)            
+            label_noise_ts *= scale[:, None]
+        
+        noise_ts.append(noise_ts_red)
 
     return noise_ts

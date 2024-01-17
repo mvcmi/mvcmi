@@ -13,20 +13,22 @@ Connectivity
     compute_cmi
     compute_ccoef_pca
 
+Null distribution
+-----------------
+.. autosummary::
+   :toctree: generated/
+
+   generate_noise_ts
+   z_score
+
+.. currentmodule:: mvcmi.pca
+
 Dimensionality Reduction
 ------------------------
 .. autosummary::
    :toctree: generated/
 
     reduce_dim
-
-Null distribution
------------------
-.. autosummary::
-   :toctree: generated/
-
-   generate_null_dist
-   z_score
 
 .. currentmodule:: mvcmi.datasets
 

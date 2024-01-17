@@ -1,6 +1,7 @@
 """Dataset fetcher."""
 
 # Authors: Mainak Jas <mjas@mgh.harvard.edu>
+from pathlib import Path
 
 import numpy as np
 import pooch
@@ -25,6 +26,8 @@ def fetch_hcp_sample(path=None):
 
     if path is None:
         path = pooch.os_cache('mvcmi')
+    else:
+        path = Path(path)
     
     urls = {'aparc.a2009s:subc4-label_names.txt': 'https://osf.io/urg7e/download',
             'irmia_2012_order.txt': 'https://osf.io/kh9bj/download',

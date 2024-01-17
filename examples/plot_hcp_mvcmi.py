@@ -15,19 +15,20 @@ pre-processed HCP data.
 import numpy as np
 import matplotlib.pyplot as plt
 
-from mvcmi import compute_cmi, compute_ccoef_pca, generate_null_dist, z_score
+from mvcmi import compute_cmi, compute_ccoef_pca, generate_noise_ts, z_score
 from mvcmi.pca import reduce_dim
 from mvcmi.datasets import fetch_hcp_sample, load_label_ts
 
 from joblib import Parallel, delayed
 
-n_jobs = 1 # number of cores to use when running PCA in parallel
+n_jobs = 30 # number of cores to use when running PCA in parallel
 n_parcels = 10 # just to make example run faster
 dim_red = 0.95
 
 # %%
 # load the preprocessed data
-data_path = fetch_hcp_sample()
+path = '/autofs/space/meghnn_001/users/mjas/github_repos/mvcmi_open/examples/mvcmi_data'
+data_path = fetch_hcp_sample(path=path)
 
 label_ts_fname = data_path / 'label_ts.npz'
 label_ts = load_label_ts(label_ts_fname, n_parcels=n_parcels)
@@ -69,16 +70,17 @@ plt.colorbar()
 # now let us compute CMI for the null distribution. Generally, the number
 # of seeds are determined empirically. For the HCP dataset, it was observed
 # that 50 seeds are sufficient to obtain stable null distribution.
-null_ts = generate_null_dist(label_ts, label_ts_red, min_dim, max_dim,
-                             dim_red=dim_red, seed1=0, seed2=50,
+noise_ts = generate_noise_ts(label_ts, label_ts_red, min_dim, max_dim,
+                             dim_red=dim_red, seed1=0, seed2=10,
                              n_jobs=n_jobs)
 null_cmis = list()
-for this_null_ts in null_ts:  # iterate over seeds
-    null_cmis.append(compute_cmi(null_ts))
+for seed, this_noise_ts in enumerate(noise_ts):  # iterate over seeds
+    print(f'mvcmi for seed {seed}')
+    null_cmis.append(compute_cmi(this_noise_ts))
 
 # %%
 # finally, we z-score the CMI values (and optionally threshold)
-z_cmi = z_score(data_cmi, null_cmis)
+z_cmi = z_score(data_cmi, np.array(null_cmis))
 
 # %%
 # let us plot the z-scored CMI values
