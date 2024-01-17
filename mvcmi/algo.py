@@ -92,6 +92,23 @@ def compute_cmi(label_ts):
     return cmi
 
 def z_score(data_cmis, null_cmis, alpha=None):
+    """Compute z-score from the data and null CMIs.
+
+    Parameters
+    ----------
+    data_cmis : array, shape (n_labels, n_labels)
+        The data CMI matrix.
+    null_cmis : array, shape (n_seeds, n_labels, n_labels)
+        The null CMI matrix.
+    alpha : float | None
+        The alpha to use for the thresholding. Must be
+        between 0. and 1.
+
+    Returns
+    -------
+    z_cmis : array, shape (n_labels, n_labels)
+        The z-scored CMI matrix.
+    """
 
     p = data_cmis.shape[0]
     idx_lt = np.tril_indices(p, k=-1)
